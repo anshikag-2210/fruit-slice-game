@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>fruit game</title>
+	<meta charset="utf-8">
+		<meta name="viewport" content="width-device-width , initial-scale=1, user-scalable=yes">
+	<link rel="stylesheet" href="fruit.css">
+	 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+    
+	</head>
+
+	<div id="contain">
+		<div id="trial"></div>
+		<div id="score">Score: <span id="scorevalue">0</span></div>
+		<div id="fruitc">
+            <img id="fruit1" class="fruit">
+		<div id="last">
+		</div>
+        </div>
+		<div id="catch">Catch Fruit</div>
+		<div id="start">Start Game</div>
+	
+    </div>
+	<audio id="slicesound">
+    <source src="audio/music.mp3">
+    <source src="audio/music.ogg">
+    
+        
+    </audio>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+
+    <script>src="jquery.js"</script>
+    <script>
+    var playing = false;
+var score;
+var trialleft;
+        var step;        
+var action; 
+var fruits=['apple', 'Banana' ,'fruit' ,'grapes' ,'peach' ,'pear', 'pineapple'];
+     
+$(function () {
+$("#start").click(function(){
+		if (playing ==true){location.reload();
+		}
+		else{
+			playing=true;
+			score=0;
+			$("#scorevalue").html(score);
+			$("#trial").show();
+            trialleft=3;
+            addhearts();
+            
+            //hide game over box
+            $("#last").hide();
+            $("#start").html("Reset Game");
+            startaction();
+		}
+	});
+
+    $("#fruit1").mouseover(function(){
+        score++;
+        $("#scorevalue").html(score);//updating score
+        
+        $("#slicesound")[0].play();//play sound
+        
+    clearInterval(action);//stop fruit 
+        $("#fruit1").hide("explode", 500);// slicing the fruit
+        //after 500 milisecond show another fruit
+       setTimeout(startaction, 500);// send new fruit
+        
+        
+    });
+    
+    
+    
+    function addhearts(){
+        $("#trial").empty();
+    for(i=0;i<trialleft;i++){
+    $("#trial").append('<img src="heart1.png"class="life">');
+    }
+    }
+    
+        
+        
+      function startaction(){
+          //generating fruit
+          
+          
+         $("#fruit1").show();
+          choosefruit();  
+          $("#fruit1").css({'left' : Math.round(800*Math.random()), 'top' : -70});
+          //generate random step to move dpown
+        step=1+ Math.round(5*Math.random());
+          action=setInterval(function(){
+              $("#fruit1").css('top', $("#fruit1").position().top + step);
+              //check if fruit is too low
+              
+              if($("#fruit1").position().top  > $("#fruitc").height()){
+                  //check if any trial left
+                  if(trialleft > 1){
+                      $("#fruit1").show();
+          choosefruit();  
+          $("#fruit1").css({'left' : Math.round(700*Math.random()), 'top' : -70});
+          //generate random step to move dpown
+        step=1+ Math.round(5*Math.random());
+                       
+         trialleft--;
+        //populate trialsleft box
+        addhearts();
+                  }
+         else{//game over
+                  playing=false;
+             $("#start").html("Start Game");
+             $("#last").show();
+             $("#last").html('<p>Game Over ! </p><p>Your Score is '+ score + '</p>')
+             
+             $("#trial").hide();
+             stopAction();
+                  }
+                  
+              }
+              
+              
+          }  ,10);
+          
+          
+          
+      }
+        
+        function choosefruit(){
+            $("#fruit1").attr('src' , 'image/' + fruits[Math.round(6*Math.random())] +'.png');
+        }
+        function stopAction(){
+            clearInterval(action);
+            $("#fruit1").hide();
+        }
+       });
+    </script>
+</html>
